@@ -3,6 +3,7 @@ import 'package:dsa_app/controller/login_controller.dart';
 import 'package:dsa_app/view/approval_form.dart';
 import 'package:dsa_app/view/widgets/date_container.dart';
 import 'package:dsa_app/view/widgets/form_container.dart';
+import 'package:dsa_app/view/widgets/next_button.dart';
 import 'package:dsa_app/view/widgets/phone_container.dart';
 import 'package:dsa_app/view/widgets/prefixDropDown.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,7 @@ class _GenerateManualyState extends State<GenerateManualy> {
   final GenerateMafController generateMafcontroller = Get.put(GenerateMafController());
   final LoginController loginController = Get.put(LoginController());
   final ApprovalFormController approvalFormController = Get.put(ApprovalFormController());
-  final _inputKey = GlobalKey(debugLabel: 'inputText');
+  //final _inputKey = GlobalKey(debugLabel: 'inputText');
   String dropdownvalue = 'Select';
   var prefix = [
     'Select',
@@ -38,7 +39,6 @@ class _GenerateManualyState extends State<GenerateManualy> {
     'MS',
     'MRS',
   ];
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     //generateMafcontroller.dateInput.text = "";
@@ -164,12 +164,12 @@ class _GenerateManualyState extends State<GenerateManualy> {
                                             fontSize: 14,
                                             color: Colors.black87),
                                       ),
-                                      FormContainer(h: categoryHeight*0.7,
+                                      FormContainer(h: h/15,
                                           w: w / 1.1,
-                                          key: _inputKey,
+                                          //key: _inputKey,
                                           controller: generateMafcontroller
                                               .guestIdController,
-                                          hintText: "Guest ID", readOnly: true,),
+                                          hintText: "Guest ID",),
                                       const SizedBox(
                                         height: 10,
                                       ),
@@ -179,7 +179,7 @@ class _GenerateManualyState extends State<GenerateManualy> {
                                             fontSize: 14,
                                             color: Colors.black87),
                                       ),
-                                      DateContainer(h: categoryHeight*0.7,
+                                      DateContainer(h: h/15,
                                           w: w / 1.1,
                                           controller: generateMafcontroller
                                               .dateInput,
@@ -329,11 +329,11 @@ class _GenerateManualyState extends State<GenerateManualy> {
                                                         fontSize: 14,
                                                         color: Colors.black87),
                                                   ),
-                                                  FormContainer(h: categoryHeight*0.7,
+                                                  FormContainer(h: h/15,
                                                       w: w / 1.5,
                                                       controller: generateMafcontroller
                                                           .nameController,
-                                                      hintText: "Guest Name", readOnly: false,),
+                                                      hintText: "Guest Name", ),
                                                 ],
                                               ),
                                             )
@@ -349,7 +349,7 @@ class _GenerateManualyState extends State<GenerateManualy> {
                                             fontSize: 14,
                                             color: Colors.black87),
                                       ),
-                                      PhoneContainer(h: categoryHeight*0.7,
+                                      PhoneContainer(h: h/15,
                                           w: w / 1.1,
                                           controller: generateMafcontroller
                                               .numberController,
@@ -372,84 +372,147 @@ class _GenerateManualyState extends State<GenerateManualy> {
                                           return generateMafcontroller.isLoading
                                               .value
                                               ? CircularProgressIndicator()
-                                              : Container(
-                                            width: w / 3,
-                                            height: h / 17,
-                                            decoration: const BoxDecoration(
-                                              color: Colors.blue,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(4)),
-                                            ),
-                                            child: TextButton(
-                                              onPressed: () {
+                                              :
+                                              NextButton(onTap: (){
                                                 print("submit");
-                                                // if (generateMafcontroller.generateMafFormKey.currentState!.validate()) {
-                                                //   final data = PostGenerateMafModel(
-                                                //     status: 1,
-                                                //     message: '',
-                                                //     data: Data(
-                                                //       id: 0,
-                                                //       approvalNumber: 0,
-                                                //       memberName: generateMafcontroller.nameController.text,
-                                                //       craeteDate: DateTime.parse(generateMafcontroller.dateInput.text),
-                                                //       welcomeFormNumber: '',
-                                                //       isMember: false,
-                                                //       mafNumber: generateMafcontroller.guestIdController.text,
-                                                //       dsaCode: '',
-                                                //       status: '',
-                                                //       mobileNumber: generateMafcontroller.numberController.text,
-                                                //       preName: dropdownvalue,
-                                                //       isAdd: '',
-                                                //     ),
-                                                //   );
-                                                // if (generateMafcontroller.generateMafFormKey.currentState!.validate()) {
-                                                //   final data = PostGenerateMafModel(
-                                                //     status: 1,
-                                                //     message: '',
-                                                //     data: Data(
-                                                //       id: 0,
-                                                //       approvalNumber: 0,
-                                                //       memberName: generateMafcontroller.nameController.text,
-                                                //       craeteDate: DateTime.parse(generateMafcontroller.dateInput.text),
-                                                //       welcomeFormNumber: '',
-                                                //       isMember: false,
-                                                //       mafNumber: generateMafcontroller.guestIdController.text,
-                                                //       dsaCode: '',
-                                                //       status: '',
-                                                //       mobileNumber: generateMafcontroller.numberController.text,
-                                                //       preName: dropdownvalue,
-                                                //       isAdd: '',
-                                                //     ),
-                                                //   );
-                                                print("object");
-                                                // print('Form data: ${data.toJson()}');
-                                                approvalFormController
-                                                    .fetchApprovalForm();
-                                                generateMafcontroller
-                                                    .checkGenerateMaf();
-                                                Get.to(() => ApprovalForm());
-                                                //     .then((_) {
-                                                //   if (generateMafcontroller.isSuccess.value) {
-                                                //     Get.snackbar("Success", "Data saved successfully");
-                                                //     return ApprovalForm();
-                                                //   } else {
-                                                //     Get.snackbar("Error", generateMafcontroller.responseMessage.value);
-                                                //   }
-                                                // });
+                                                      // if (generateMafcontroller.generateMafFormKey.currentState!.validate()) {
+                                                      //   final data = PostGenerateMafModel(
+                                                      //     status: 1,
+                                                      //     message: '',
+                                                      //     data: Data(
+                                                      //       id: 0,
+                                                      //       approvalNumber: 0,
+                                                      //       memberName: generateMafcontroller.nameController.text,
+                                                      //       craeteDate: DateTime.parse(generateMafcontroller.dateInput.text),
+                                                      //       welcomeFormNumber: '',
+                                                      //       isMember: false,
+                                                      //       mafNumber: generateMafcontroller.guestIdController.text,
+                                                      //       dsaCode: '',
+                                                      //       status: '',
+                                                      //       mobileNumber: generateMafcontroller.numberController.text,
+                                                      //       preName: dropdownvalue,
+                                                      //       isAdd: '',
+                                                      //     ),
+                                                      //   );
+                                                      // if (generateMafcontroller.generateMafFormKey.currentState!.validate()) {
+                                                      //   final data = PostGenerateMafModel(
+                                                      //     status: 1,
+                                                      //     message: '',
+                                                      //     data: Data(
+                                                      //       id: 0,
+                                                      //       approvalNumber: 0,
+                                                      //       memberName: generateMafcontroller.nameController.text,
+                                                      //       craeteDate: DateTime.parse(generateMafcontroller.dateInput.text),
+                                                      //       welcomeFormNumber: '',
+                                                      //       isMember: false,
+                                                      //       mafNumber: generateMafcontroller.guestIdController.text,
+                                                      //       dsaCode: '',
+                                                      //       status: '',
+                                                      //       mobileNumber: generateMafcontroller.numberController.text,
+                                                      //       preName: dropdownvalue,
+                                                      //       isAdd: '',
+                                                      //     ),
+                                                      //   );
+                                                      print("object");
+                                                      // print('Form data: ${data.toJson()}');
+                                                      approvalFormController
+                                                          .fetchApprovalForm();
+                                                      approvalFormController.fetchOnHoldApprovalForm();
+                                                      generateMafcontroller
+                                                          .checkGenerateMaf();
+                                                      //Get.to(() => ApprovalForm());
+                                                      //     .then((_) {
+                                                      //   if (generateMafcontroller.isSuccess.value) {
+                                                      //     Get.snackbar("Success", "Data saved successfully");
+                                                      //     return ApprovalForm();
+                                                      //   } else {
+                                                      //     Get.snackbar("Error", generateMafcontroller.responseMessage.value);
+                                                      //   }
+                                                      // });
 
-                                                print(
-                                                    'Form fields saved successfully');
-                                                //  }
-                                              },
-                                              child: const Text(
-                                                "Submit",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight
-                                                        .bold),
-                                              ),
-                                            ),
-                                          );
+                                                      print(
+                                                          'Form fields saved successfully');
+                                                      //  }
+
+                                              }, text: "Submit", h: h/17, w: w/3);
+                                          // Container(
+                                          //   width: w / 3,
+                                          //   height: h / 17,
+                                          //   decoration: const BoxDecoration(
+                                          //     color: Colors.blue,
+                                          //     borderRadius: BorderRadius.all(
+                                          //         Radius.circular(4)),
+                                          //   ),
+                                          //   child: TextButton(
+                                          //     onPressed: () {
+                                          //       print("submit");
+                                          //       // if (generateMafcontroller.generateMafFormKey.currentState!.validate()) {
+                                          //       //   final data = PostGenerateMafModel(
+                                          //       //     status: 1,
+                                          //       //     message: '',
+                                          //       //     data: Data(
+                                          //       //       id: 0,
+                                          //       //       approvalNumber: 0,
+                                          //       //       memberName: generateMafcontroller.nameController.text,
+                                          //       //       craeteDate: DateTime.parse(generateMafcontroller.dateInput.text),
+                                          //       //       welcomeFormNumber: '',
+                                          //       //       isMember: false,
+                                          //       //       mafNumber: generateMafcontroller.guestIdController.text,
+                                          //       //       dsaCode: '',
+                                          //       //       status: '',
+                                          //       //       mobileNumber: generateMafcontroller.numberController.text,
+                                          //       //       preName: dropdownvalue,
+                                          //       //       isAdd: '',
+                                          //       //     ),
+                                          //       //   );
+                                          //       // if (generateMafcontroller.generateMafFormKey.currentState!.validate()) {
+                                          //       //   final data = PostGenerateMafModel(
+                                          //       //     status: 1,
+                                          //       //     message: '',
+                                          //       //     data: Data(
+                                          //       //       id: 0,
+                                          //       //       approvalNumber: 0,
+                                          //       //       memberName: generateMafcontroller.nameController.text,
+                                          //       //       craeteDate: DateTime.parse(generateMafcontroller.dateInput.text),
+                                          //       //       welcomeFormNumber: '',
+                                          //       //       isMember: false,
+                                          //       //       mafNumber: generateMafcontroller.guestIdController.text,
+                                          //       //       dsaCode: '',
+                                          //       //       status: '',
+                                          //       //       mobileNumber: generateMafcontroller.numberController.text,
+                                          //       //       preName: dropdownvalue,
+                                          //       //       isAdd: '',
+                                          //       //     ),
+                                          //       //   );
+                                          //       print("object");
+                                          //       // print('Form data: ${data.toJson()}');
+                                          //       approvalFormController
+                                          //           .fetchApprovalForm();
+                                          //       generateMafcontroller
+                                          //           .checkGenerateMaf();
+                                          //       Get.to(() => ApprovalForm());
+                                          //       //     .then((_) {
+                                          //       //   if (generateMafcontroller.isSuccess.value) {
+                                          //       //     Get.snackbar("Success", "Data saved successfully");
+                                          //       //     return ApprovalForm();
+                                          //       //   } else {
+                                          //       //     Get.snackbar("Error", generateMafcontroller.responseMessage.value);
+                                          //       //   }
+                                          //       // });
+                                          //
+                                          //       print(
+                                          //           'Form fields saved successfully');
+                                          //       //  }
+                                          //     },
+                                          //     child: const Text(
+                                          //       "Submit",
+                                          //       style: TextStyle(
+                                          //           color: Colors.white,
+                                          //           fontWeight: FontWeight
+                                          //               .bold),
+                                          //     ),
+                                          //   ),
+                                          // );
                                         }),
 
                                       ),

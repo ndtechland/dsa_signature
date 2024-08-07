@@ -3,16 +3,15 @@ class FormContainer extends StatelessWidget {
   final double w;
   final double h;
   final TextEditingController controller;
-  bool readOnly;
+ // bool readOnly;
    String hintText;
-  final _inputKey = GlobalKey(debugLabel: 'inputText');
    FormContainer({
     super.key,
     required this.h,
     required this.w,
     required this.controller,
     required this.hintText,
-    required this.readOnly,
+   // required this.readOnly,
   });
 
   @override
@@ -20,10 +19,10 @@ class FormContainer extends StatelessWidget {
     return Container(
       width: w,
       height: h,
-      color: Colors.yellow,
+      //color: Colors.yellow,
       child: TextFormField(
-        key: _inputKey,
-        readOnly: readOnly,
+        //key: _inputKey,
+        //readOnly: readOnly,
         controller: controller,
         decoration:  InputDecoration(
           border: OutlineInputBorder(

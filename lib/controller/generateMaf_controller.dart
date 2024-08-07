@@ -75,10 +75,14 @@ void onClose() {
 
         print("ApprovalNum: ${approvalNum.value}");
         print("DSA Code: ${dsaCode.value}");
+        Get.snackbar("Success", "Generate Maf successfully.");
+
       }
       else {
        // responseMessage.value = 'Failed to post data';
         print('Error: Failed to post data');
+        Get.snackbar("Error", "Failed to Generate Maf.");
+
       }
     } catch (e) {
       isSuccess.value = false;

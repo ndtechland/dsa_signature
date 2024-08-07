@@ -382,24 +382,25 @@ class _PhoneHomeState extends State<PhoneHome> {
                                                   actions: [
                                                     TextButton(
                                                       onPressed: () async {
-                                                        setState(() {
-                                                          nonRci = rciValue;
-                                                          withRci =
-                                                              withRciValue;
-                                                        });
+                                                        // setState(() {
+                                                        //   nonRci = rciValue;
+                                                        //   withRci =
+                                                        //       withRciValue;
+                                                        // });
                                                         Navigator.pop(context);
-                                                        //_memberController.fetchMembersList();
+                                                        _memberController.fetchMembersList();
                                                         // Navigator.pop(context);
 
                                                         //  _memberController.members.clear();
                                                         //  await Get.off( RegisterUser());
+                                                        _addMemberController.checkAddMember();
                                                          userNameController.fetchUserName();
-                                                         generateMafcontroller.nameController.clear();
-                                                         generateMafcontroller.numberController.clear();
+                                                         // generateMafcontroller.nameController.clear();
+                                                         // generateMafcontroller.numberController.clear();
+                                                         //
 
-                                                         _addMemberController.checkAddMember();
                                                          //generateMafcontroller.dropdownvalue;
-                                                        await Get.to(()=>
+                                                         Get.to(()=>
                                                                   RegisterUser());
                                                           //  (Route<dynamic> route) => false,
 
@@ -461,7 +462,7 @@ class _PhoneHomeState extends State<PhoneHome> {
                         icon: Icons.document_scanner_sharp, iconSize: iconSize*0.9, textSize: textSize*0.8,radius: radiusSize*0.7,),
                     SizedBox(height: 15,),
                     HomeContainer(onTap: () {
-                      Get.to(() => Signature());
+                    //  Get.to(() => Signature());
                     },
                         text: "Sign",
                         h: categoryHeight*0.8,

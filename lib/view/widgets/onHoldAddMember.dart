@@ -6,6 +6,7 @@ import 'package:dsa_app/model/getMembersOnHoldList_model.dart';
 import 'package:dsa_app/view/register_user2.dart';
 import 'package:dsa_app/view/widgets/appbar.dart';
 import 'package:dsa_app/view/widgets/apptext.dart';
+import 'package:dsa_app/view/widgets/next_button.dart';
 import 'package:dsa_app/view/widgets/register_container.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -603,17 +604,24 @@ class _OnHoldAddMemberState extends State<OnHoldAddMember> {
                       const SizedBox(height: 10),
 
                       Center(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(minimumSize: const Size(200, 50)),
-                          onPressed: () {
-                            print("add member");
-                            // _addMemberController.checkAddMember();
-                            // if (_controller.registerformkey.currentState!.validate()) {
-                            Get.to(const OnHoldMember2());
-                            // }
-                          },
-                          child: const Text("Next"),
-                        ),
+                        child: NextButton(onTap: () {
+                          print("add member");
+                          // _addMemberController.checkAddMember();
+                          // if (_controller.registerformkey.currentState!.validate()) {
+                          Get.to(const OnHoldMember2());
+                          // }
+                        }, text: "Next", h: h/17, w: w/2)
+                        // ElevatedButton(
+                        //   style: ElevatedButton.styleFrom(minimumSize: const Size(200, 50)),
+                        //   onPressed: () {
+                        //     print("add member");
+                        //     // _addMemberController.checkAddMember();
+                        //     // if (_controller.registerformkey.currentState!.validate()) {
+                        //     Get.to(const OnHoldMember2());
+                        //     // }
+                        //   },
+                        //   child: const Text("Next"),
+                        // ),
                       ),
                       const SizedBox(height: 20),
                     ],

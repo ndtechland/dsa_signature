@@ -12,7 +12,7 @@ import 'addMember_controller.dart';
 import 'mafList_controller.dart';
 import 'membersOnHold_controller.dart';
 
-class ApprovalFormController extends GetxController {
+class ApprovalFormHoldMemberController extends GetxController {
   var isLoading = false.obs;
   final MemberController _memberController = Get.put(MemberController());
   final AddMemberController _addMemberController = Get.put(AddMemberController());
@@ -72,7 +72,6 @@ class ApprovalFormController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchApprovalForm();
     fetchOnHoldApprovalForm();
     approvalNum = TextEditingController();
     member1name = TextEditingController();
@@ -126,52 +125,27 @@ class ApprovalFormController extends GetxController {
   }
 
   RxString cvUrl = ''.obs;
-  ApprovalFormModel? getjobdetailbyidModel;
+  ApprovalFormModel? approvalFormModel;
 
-  Future<bool> fetchApprovalForm() async {
-    isLoading(true);
-    //await _addMemberController.checkAddMember();
-    //await _membersOnHoldController.checkHoldAddMember();
-    getjobdetailbyidModel = await ApiProvider.getApprovalForm();
-    print("dob:$member1dob");
-    print("approval try 1");
-
-    if (getjobdetailbyidModel?.data?.dsaCode == null) {
-      print("approval try 2");
-      isLoading(true);
-      print("nulllllllllllllll");
-      getjobdetailbyidModel = await ApiProvider.getApprovalForm(
-        // relatedjobapi?.data.map((e)=>e.id) as String
-      );
-      return false;
-    }
-    if (getjobdetailbyidModel?.data?.dsaCode != null) {
-      print("dsaCode ApprovAL:${getjobdetailbyidModel?.data?.dsaCode}");
-
-      //Get.to(() => TotalPrice());
-      isLoading(false);
-      return true;
-    }
-    return true;
-  }
   Future<bool> fetchOnHoldApprovalForm() async {
-    isLoading(true);
+    isLoading(false);
     //await _addMemberController.checkAddMember();
-    //await _membersOnHoldController.checkHoldAddMember();
-    getjobdetailbyidModel = await ApiProvider.getHoldMemberApprovalForm();
+    await _membersOnHoldController.checkHoldAddMember();
+    approvalFormModel = await ApiProvider.getHoldMemberApprovalForm();
     print("dob:$member1dob");
-    print("approval on hold try 1");
+    print("approvalHold try 1");
 
-    if (getjobdetailbyidModel?.data?.dsaCode == null) {
-      print("approval on hold try 2");
-      isLoading(true);
-      getjobdetailbyidModel = await ApiProvider.getHoldMemberApprovalForm(
+    if (approvalFormModel?.data?.dsaCode == null) {
+      print("approvalHold try 2");
+
+      isLoading(false);
+      approvalFormModel = await ApiProvider.getHoldMemberApprovalForm(
         // relatedjobapi?.data.map((e)=>e.id) as String
       );
       return false;
     }
-    if (getjobdetailbyidModel?.data?.dsaCode != null) {
-      print("dsaCode ApprovAL on hold:${getjobdetailbyidModel?.data?.dsaCode}");
+    if (approvalFormModel?.data?.dsaCode != null) {
+      print("dsaCode ApprovAL Hold Mem:${approvalFormModel?.data?.dsaCode}");
 
       //Get.to(() => TotalPrice());
       isLoading(false);

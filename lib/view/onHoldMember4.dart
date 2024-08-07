@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dsa_app/controller/controller.dart';
 import 'package:dsa_app/view/pdfGeneratorMembersOnHold.dart';
 import 'package:dsa_app/view/widgets/appbar.dart';
@@ -11,12 +13,14 @@ import 'package:get/get_navigation/get_navigation.dart';
 import 'package:intl/intl.dart';
 
 import '../constant.dart';
-import '../controller/addMember_controller.dart';
+// import '../controller/addMember_controller.dart';
 import '../controller/approvalForm_controller.dart';
 import '../controller/getMembersOnHoldList_controller.dart';
 import '../controller/membersOnHold_controller.dart';
 import '../controller/newUserHolding_controller.dart';
-import 'approval_form.dart';
+import 'package:dsa_app/view/approval_form.dart';
+
+import 'aprovalFormHoldMem.dart';
 
 class OnHoldMember4 extends StatefulWidget {
   const OnHoldMember4({super.key});
@@ -28,7 +32,7 @@ class OnHoldMember4 extends StatefulWidget {
 class _OnHoldMember4State extends State<OnHoldMember4> {
   int _selectedValue = 1;
   final int adminCharge = 12000;
-  final AddMemberController _addMemberController = Get.put(AddMemberController());
+  // final AddMemberController _addMemberController = Get.put(AddMemberController());
   final GetMembersOnHoldListController _onHoldListController = Get.put(GetMembersOnHoldListController());
   final NewuserholdingController _newuserholdingController = Get.put(NewuserholdingController());
   final MembersOnHoldController membersOnHoldController = Get.put(MembersOnHoldController());
@@ -36,6 +40,7 @@ class _OnHoldMember4State extends State<OnHoldMember4> {
   bool isLoading = false;
   late final int emi;
   bool _showAdditionalFields = false;
+  Timer? _debounce;
 
 
   var payment = [
@@ -72,8 +77,23 @@ class _OnHoldMember4State extends State<OnHoldMember4> {
     membersOnHoldController.noOfEmiController?.addListener(() {
       updateEmi();
     });
+    membersOnHoldController.nightStayController?.addListener((){
+      updateDaysAndNights();
+    });
   }
-
+  void updateDaysAndNights(){
+    if(membersOnHoldController.nightStayController!.text.isNotEmpty){
+      try{
+        final night = int.parse(membersOnHoldController.nightStayController!.text);
+        final days= night+1;
+        membersOnHoldController.dayStayController!.text = days.toString();
+      } catch (e) {
+        membersOnHoldController.dayStayController!.text ='';
+      }
+    } else {
+      membersOnHoldController.dayStayController!.text ='';
+    }
+  }
   void updatePurchasePrice() {
     if (membersOnHoldController.totalCostController!.text.isNotEmpty) {
       try {
@@ -1249,43 +1269,177 @@ class _OnHoldMember4State extends State<OnHoldMember4> {
                       : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      NextButton(onTap: () async {
-                        if (isLoading) return; // Prevent multiple taps
+                      NextButton(
+                        onTap: () {
+                          if (_debounce?.isActive ?? false) _debounce?.cancel();
+                          _debounce = Timer(const Duration(milliseconds: 800), () async {
+                            if (isLoading) return; // Prevent multiple taps
 
-                        setState(() {
-                          isLoading = true;
-                        });
+                            setState(() {
+                              isLoading = true;
+                            });
 
-                        try {
-                          print("final addMember");
+                            try {
+                              print("Starting to add member on hold...");
 
-                          // Add member
-                          await membersOnHoldController.checkAddMember();
-                          print("Member added successfully.");
+                              // Add member
+                              bool memberAdded = await membersOnHoldController.checkHoldAddMember();
+                              if (memberAdded) {
+                                print("Member on hold added successfully.");
 
-                          // Fetch approval form
-                          bool success = await approvalFormController.fetchApprovalForm();
-                          if (success) {
-                            print("addmember:${approvalFormController.getjobdetailbyidModel?.data?.member1Dob}");
-                            print("modelApproval:${approvalFormController.getjobdetailbyidModel}");
-                            Get.to(() => ApprovalForm());
-                          } else {
-                            Get.snackbar("Error", "Failed to Add Members. Please try again.");
-                          }
-                        } catch (e) {
-                          Get.snackbar("Error", "An error occurred. Please try again.");
-                        } finally {
-                          setState(() {
-                            isLoading = false;
+                                // Delay to simulate some waiting time before fetching approval form
+                                await Future.delayed(Duration(seconds: 4));
+
+                                // Fetch approval form
+                                bool success = await approvalFormController.fetchOnHoldApprovalForm();
+                                print("tryiiing to read approval num");
+                                print("tryiiing to read approval num${approvalFormController.getjobdetailbyidModel?.data?.approvalNumber.toString()}");
+                                if (success) {
+                                  print("addmember on hold: ${approvalFormController.getjobdetailbyidModel?.data?.member1Dob}");
+                                  print("modelApproval: ${approvalFormController.getjobdetailbyidModel}");
+                                  print("modelApproval: ${approvalFormController.getjobdetailbyidModel?.data?.approvalNumber.toString()}");
+                                  await Get.to(() => ApprovalForm());
+                                } else {
+                                  Get.snackbar("Error", "Failed to fetch approval form. Please try again.");
+                                }
+                              } else {
+                                Get.snackbar("Error", "Failed to add on hold member. Please try again.");
+                              }
+                            } catch (e) {
+                              Get.snackbar("Error", "An error occurred. Please try again.");
+                            } finally {
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
                           });
-                        }
-                        // print("final addMember");
-                        // membersOnHoldController.checkAddMember();
-                        // approvalFormController.fetchApprovalForm();
-                        // Get.to(()=> const PdfGeneratorMembersOnHold());
-                      }, text: "Submit", h: h/18, w: w/2.3),
+                        },
+                        // onTap: () async {
+                        //   if (isLoading) return; // Prevent multiple taps
+                        //
+                        //   setState(() {
+                        //     isLoading = true;
+                        //   });
+                        //
+                        //   try {
+                        //     print("Starting to add member...");
+                        //
+                        //     // Add member
+                        //     bool memberAdded = await membersOnHoldController.checkHoldAddMember();
+                        //     if (memberAdded) {
+                        //       print("Member added successfully.");
+                        //
+                        //       // Delay to simulate some waiting time before fetching approval form
+                        //       await Future.delayed(Duration(seconds: 2));
+                        //
+                        //       // Fetch approval form
+                        //       bool success = await approvalFormController.fetchOnHoldApprovalForm();
+                        //       if (success) {
+                        //         print("addmember: ${approvalFormController.getjobdetailbyidModel?.data?.member1Dob}");
+                        //         print("modelApproval: ${approvalFormController.getjobdetailbyidModel}");
+                        //         await Get.to(() => ApprovalForm());
+                        //       } else {
+                        //         Get.snackbar("Error", "Failed to fetch approval form. Please try again.");
+                        //       }
+                        //     } else {
+                        //       Get.snackbar("Error", "Failed to add member. Please try again.");
+                        //     }
+                        //   } catch (e) {
+                        //     Get.snackbar("Error", "An error occurred. Please try again.");
+                        //   } finally {
+                        //     setState(() {
+                        //       isLoading = false;
+                        //     });
+                        //   }
+                        // },
+                        text: "Submit",
+                        h: h / 18,
+                        w: w / 2.3,
+                      ),
+                      // NextButton(
+                      //   onTap: () async {
+                      //     if (isLoading) return; // Prevent multiple taps
+                      //
+                      //     setState(() {
+                      //       isLoading = true;
+                      //     });
+                      //
+                      //     try {
+                      //       print("Starting to add member...");
+                      //
+                      //       // Add member
+                      //       bool holdMemberAdded = await membersOnHoldController.checkHoldAddMember();
+                      //       if (holdMemberAdded) {
+                      //         print("Member added successfully.");
+                      //         await Future.delayed(Duration(seconds: 1));
+                      //
+                      //         // Fetch approval form
+                      //         bool success = await approvalFormController.fetchOnHoldApprovalForm();
+                      //         if (success) {
+                      //           print("addmember: ${approvalFormController.getjobdetailbyidModel?.data?.member1Dob}");
+                      //           print("modelApproval: ${approvalFormController.getjobdetailbyidModel}");
+                      //           await  Get.to(() => ApprovalForm());
+                      //         } else {
+                      //           Get.snackbar("Error", "Failed to fetch approval form. Please try again.");
+                      //         }
+                      //       } else {
+                      //         Get.snackbar("Error", "Failed to add member. Please try again.");
+                      //       }
+                      //     } catch (e) {
+                      //       Get.snackbar("Error", "An error occurred. Please try again.");
+                      //     } finally {
+                      //       setState(() {
+                      //         isLoading = false;
+                      //       });
+                      //     }
+                      //   },
+                      //   text: "Submittt",
+                      //   h: h / 18,
+                      //   w: w / 2.3,
+                      // ),
+
+
+
+
+
+                      // NextButton(onTap: () async {
+                      //   if (isLoading) return; // Prevent multiple taps
+                      //
+                      //   setState(() {
+                      //     isLoading = true;
+                      //   });
+                      //
+                      //   try {
+                      //     print("final addMember");
+                      //
+                      //     // Add member
+                      //     await membersOnHoldController.checkHoldAddMember();
+                      //     print("Member added successfully.");
+                      //
+                      //     // Fetch approval form
+                      //     bool success = await approvalFormController.fetchOnHoldApprovalForm();
+                      //     if (success) {
+                      //       print("addmember:${approvalFormController.getjobdetailbyidModel?.data?.member1Dob}");
+                      //       print("modelApproval:${approvalFormController.getjobdetailbyidModel}");
+                      //       Get.to(() => ApprovalForm());
+                      //     } else {
+                      //       Get.snackbar("Error", "Failed to Add Members. Please try again.");
+                      //     }
+                      //   } catch (e) {
+                      //     Get.snackbar("Error", "An error occurred. Please try again.");
+                      //   } finally {
+                      //     setState(() {
+                      //       isLoading = false;
+                      //     });
+                      //   }
+                      //   // print("final addMember");
+                      //   // membersOnHoldController.checkAddMember();
+                      //   // approvalFormController.fetchApprovalForm();
+                      //   // Get.to(()=> const PdfGeneratorMembersOnHold());
+                      // }, text: "Submit not", h: h/18, w: w/2.3),
                       NextButton(onTap: (){
-                        print("final addMember");
+                        print("final addMember on hold");
+                        approvalFormController.fetchOnHoldApprovalForm();
                         // _addMemberController.checkAddMember();
                         Get.to(()=> const PdfGeneratorMembersOnHold());}, text: "Preview", h: h/18, w: w/2.3),
                     ],

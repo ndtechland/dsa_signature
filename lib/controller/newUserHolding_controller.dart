@@ -2,11 +2,14 @@ import 'package:dsa_app/apiServices/api_service.dart';
 import 'package:dsa_app/model/newUserHoldingPayment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class NewuserholdingController extends GetxController{
   final RxBool isLoading = false.obs;
   final GlobalKey<FormState> newUserHoldingFormKey = GlobalKey<FormState>();
   var isSuccess = false.obs;
+  var mafNum = ''.obs;
+  var dsaCode = ''.obs;
   TextEditingController dateHolding = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -16,9 +19,21 @@ class NewuserholdingController extends GetxController{
   final TextEditingController otherChequeController = TextEditingController();
   final TextEditingController otherCardController = TextEditingController();
   final TextEditingController otherOnlineController = TextEditingController();
+  final TextEditingController mafNumber = TextEditingController();
   String dropdownPayment = 'Select';
   String dropdownvalue1 = 'Select';
-
+  @override
+  void onInit(){
+    super.onInit();
+    final box = GetStorage();
+    mafNumber.text = box.read('Approval Number') ?? '';
+    mafNum.value = mafNumber.text;
+    // dsaController.text = box.read('DsaCode') ?? '';
+    // dsaCode.value = dsaController.text;
+    // if (box.hasData('DsaCode')) {
+    //   loginController.usernameController1.text = box.read('DsaCode');
+    // }
+  }
   Future<void> postNewUserHolding() async {
     isLoading.value = true;
     try{
@@ -29,8 +44,14 @@ class NewuserholdingController extends GetxController{
       if(res.statusCode == 200){
         final result = newuserholdingpaymentModelFromJson(res.body);
         print("New User Holding Payment:${result.message}");
+        //mafNum.value = result.data?.approvalNumber.toString() ?? '';
+
+        Get.snackbar("Success", "New User Holding Payment added successfully.");
+
       } else {
         print("Error: Failed to add new user holding payment");
+        Get.snackbar("Error", "Failed to add new user holding payment");
+
       }
     } catch(e){
       isSuccess.value = false;

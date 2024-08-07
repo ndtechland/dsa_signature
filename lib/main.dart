@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dsa_app/splash.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,9 +15,14 @@ void main() async {
   await GetStorage.init();
   // Set custom HTTP overrides
   HttpOverrides.global = MyHttpOverrides();
-
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(SignatureApp());
+  });
   // Start the application
-  runApp(const SignatureApp());
+ // runApp(const SignatureApp());
 }
 
 /// Renders the SignatureApp widget.

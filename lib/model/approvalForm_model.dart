@@ -1,3 +1,6 @@
+// To parse this JSON data, do
+//
+//     final approvalFormModel = approvalFormModelFromJson(jsonString);
 
 import 'dart:convert';
 
@@ -34,6 +37,7 @@ class ApprovalData {
   DateTime? craeteDate;
   String? mafNumber;
   String? dsaCode;
+  String? memberName1;
   DateTime? member1Dob;
   String? memberName2;
   DateTime? member2Dob;
@@ -59,12 +63,12 @@ class ApprovalData {
   num? balance;
   String? modeOfPayment;
   DateTime? dateOfJoining;
-  num? emi;
+  dynamic emi;
   num? numberOfEmi;
   DateTime? emiStartDate;
-  dynamic offerDestination;
+  String? offerDestination;
   dynamic offerStayDays;
-  dynamic offerStayNights;
+  num? offerStayNights;
   dynamic offerNoOfAdults;
   dynamic offerNoOfChild;
   bool? offerOnlyAccomodation;
@@ -73,8 +77,8 @@ class ApprovalData {
   bool? offerDinner;
   bool? offerSightSeeing;
   dynamic offerNoOfAirtickets;
-  dynamic airtTicketType;
-  dynamic offerBalanceAmount;
+  String? airtTicketType;
+  num? offerBalanceAmount;
   String? offerValidity;
   String? offerIncludeRemark;
   String? repName;
@@ -85,6 +89,7 @@ class ApprovalData {
     this.craeteDate,
     this.mafNumber,
     this.dsaCode,
+    this.memberName1,
     this.member1Dob,
     this.memberName2,
     this.member2Dob,
@@ -137,6 +142,7 @@ class ApprovalData {
     craeteDate: json["CraeteDate"] == null ? null : DateTime.parse(json["CraeteDate"]),
     mafNumber: json["MafNumber"],
     dsaCode: json["DsaCode"],
+    memberName1: json["MemberName1"],
     member1Dob: json["Member1DOB"] == null ? null : DateTime.parse(json["Member1DOB"]),
     memberName2: json["MemberName2"],
     member2Dob: json["Member2DOB"] == null ? null : DateTime.parse(json["Member2DOB"]),
@@ -189,6 +195,7 @@ class ApprovalData {
     "CraeteDate": craeteDate?.toIso8601String(),
     "MafNumber": mafNumber,
     "DsaCode": dsaCode,
+    "MemberName1": memberName1,
     "Member1DOB": member1Dob?.toIso8601String(),
     "MemberName2": memberName2,
     "Member2DOB": member2Dob?.toIso8601String(),

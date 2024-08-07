@@ -1,18 +1,21 @@
+import 'dart:convert';
+
 import 'package:dsa_app/apiServices/api_service.dart';
-import 'package:dsa_app/controller/mafList_controller.dart';
-import 'package:dsa_app/model/addMember_model.dart';
+import 'package:dsa_app/controller/newUserHolding_controller.dart';
+import 'package:dsa_app/model/memberOnHold_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../model/generateMaf_model1.dart';
 import 'generateMaf_controller.dart';
+import 'getMembersOnHoldList_controller.dart';
 
 class MembersOnHoldController extends GetxController {
   final RxBool isLoading = false.obs;
   var isSuccess = false.obs;
-  final GenerateMafController generateController = Get.put(GenerateMafController());
-  final MemberController memberController = Get.put(MemberController());
+  final NewuserholdingController newuserholdingController = Get.put(NewuserholdingController());
+  final GetMembersOnHoldListController membersOnHoldListController = Get.put(GetMembersOnHoldListController());
   TextEditingController? dateOfJoining,
       dob1,
       dob2,
@@ -284,17 +287,17 @@ class MembersOnHoldController extends GetxController {
       // print("only accomo:${parseBool(onlyAccomodation.toString())}");
       final res = await ApiProvider.postMembersOnHold(
           dateOfJoininggg,
-          generateController.dropdownvalue,
-          generateController.nameController.text,
+          newuserholdingController.dropdownvalue1,
+          newuserholdingController.nameController.text,
           member1DOB,
-          generateController.numberController.text,
+          newuserholdingController.mobileController.text,
           dropdownvalue2,
           nameController2?.text,
           member2DOB,
           numberController2?.text,
           addressController?.text,
           residenceController?.text,
-          emailController?.text,
+          newuserholdingController.emailController.text,
           cityController?.text,
           pincodeController?.text,
           dropdownTenure,
@@ -313,9 +316,9 @@ class MembersOnHoldController extends GetxController {
           adminController!.text,
           firstAmcController!.text,
           roundOffController?.text,
-          preAmoController?.text,
+          newuserholdingController.amountController.text,
           initialPayController!.text,
-          dropdownPayment,
+          newuserholdingController.dropdownPayment,
           otherCashController?.text, // otherCash
           otherCardController?.text, // otherCard
           otherOnlineController?.text, // otherOnline
@@ -341,7 +344,7 @@ class MembersOnHoldController extends GetxController {
           remarkController?.text,
           dropdownTicket,
           airTicket,
-          memberController.dropdownvalue,
+          membersOnHoldListController.dropdownvalue,
           userNameController?.text,
           dateTimeOfHolding
       );
@@ -350,14 +353,17 @@ class MembersOnHoldController extends GetxController {
 
       if (res.statusCode == 1) {
         print("status code 200");
-        final result = postAddMemberModelFromJson(res.body);
-        print('Add Member: ${result.message}');
+        final responseBody = jsonDecode(res.body);
+
+       // final result = postMemberOnHoldModelFromJson(res.body);
+        print('Add Member: ${responseBody.message}');
       } else {
         print('Error: Failed to add member data');
       }
     } catch (e) {
       isSuccess.value = false;
       print('Errorrr: $e');
+
     } finally {
       isLoading.value = false;
     }
@@ -404,7 +410,7 @@ class MembersOnHoldController extends GetxController {
   //   emiController.text;
   //   noOfEmiController.text;
   // }
-  bool checkAddMember() {
+  bool checkHoldAddMember() {
     final formState = membersOnHoldFormKey.currentState;
     if (formState != null ) {
       formState.save();
@@ -414,6 +420,55 @@ class MembersOnHoldController extends GetxController {
     return true;
 
   }
+  @override
+  void onClose(){
+    dateOfJoining?.dispose();
+    dob1?.dispose();
+    dob2?.dispose();
+    nameController2?.dispose();
+    numberController2?.dispose();
+    addressController?.dispose();
+    residenceController?.dispose();
+    emailController?.dispose();
+    cityController?.dispose();
+    pincodeController?.dispose();
+    phController?.dispose();
+    validityController?.dispose();
+    occupancyController?.dispose();
+    amcController?.dispose();
+    amcDueController?.dispose();
+    dsaCodeController?.dispose();
+    empCodeController?.dispose();
+    rciController?.dispose();
+    totalCostController?.dispose();
+    purchaseController?.dispose();
+    adminController?.dispose();
+    firstAmcController?.dispose();
+    roundOffController?.dispose();
+    preAmoController?.dispose();
+    initialPayController?.dispose();
+    balanceController?.dispose();
+    emiDateInput?.dispose();
+    managerNameController?.dispose();
+    repNameController?.dispose();
+    destinationController?.dispose();
+    nightStayController?.dispose();
+    dayStayController?.dispose();
+    adultOccupancyController?.dispose();
+    childOccupancyController?.dispose();
+    balanceOfferController?.dispose();
+    validityOfferController?.dispose();
+    remarkController?.dispose();
+    emiController?.dispose();
+    noOfEmiController?.dispose();
+    userNameController?.dispose();
+    otherOnlineController?.dispose();
+    otherCashController?.dispose();
+    otherCardController?.dispose();
+    otherChequeController?.dispose();
+    dateOfHolding?.dispose();
+  }
+
 }
 
 bool parseBool(String value) {

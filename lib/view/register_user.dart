@@ -3,6 +3,7 @@ import 'package:dsa_app/controller/userName_controller.dart';
 import 'package:dsa_app/view/register_user2.dart';
 import 'package:dsa_app/view/widgets/appbar.dart';
 import 'package:dsa_app/view/widgets/apptext.dart';
+import 'package:dsa_app/view/widgets/next_button.dart';
 import 'package:dsa_app/view/widgets/register_container.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,8 @@ class _RegisterUserState extends State<RegisterUser> {
   void initState() {
     super.initState();
     resetDropdownValues();
+    _memberController.dropdownvalue;
+    print("memberDropdown:${_memberController.dropdownvalue}");
     _addMemberController.userNameController?.text = _userNameController.resultUserName.value;
     print("userName:${_addMemberController.userNameController}");
     print("userName:${_userNameController.resultUserName}");
@@ -588,18 +591,27 @@ class _RegisterUserState extends State<RegisterUser> {
                         ),
                         const SizedBox(height: 10),
                         Center(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(minimumSize: const Size(200, 50)),
-                            onPressed: () {
-                              print("add member");
-                             // _addMemberController.checkAddMember();
-                              // if (_controller.registerformkey.currentState!.validate()) {
-                                Get.to(const RegisterUser2());
-                              // }
-                            },
-                            child: const Text("Submit"),
-                          ),
+                          child: NextButton(onTap: () {
+                            print("add member");
+                            // _addMemberController.checkAddMember();
+                            // if (_controller.registerformkey.currentState!.validate()) {
+                            Get.to(const RegisterUser2());
+                            // }
+                          },text: "Submit", h: h/17, w: w/3),
                         ),
+                        // Center(
+                        //   child: ElevatedButton(
+                        //     style: ElevatedButton.styleFrom(minimumSize: const Size(200, 50)),
+                        //     onPressed: () {
+                        //       print("add member");
+                        //      // _addMemberController.checkAddMember();
+                        //       // if (_controller.registerformkey.currentState!.validate()) {
+                        //         Get.to(const RegisterUser2());
+                        //       // }
+                        //     },
+                        //     child: const Text("Submit"),
+                        //   ),
+                        // ),
                         const SizedBox(height: 20),
                       ],
                     ),

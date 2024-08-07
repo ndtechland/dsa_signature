@@ -472,15 +472,15 @@ class ApiProvider {
       print(response.statusCode);
       var responseData = json.decode(response.body);
       var id = responseData['Data']['Id'];
-      var approvalNumber = responseData['Data']['ApprovalNumber'];
+      //var approvalNumber = responseData['Data']['ApprovalNumber'];
       var dsa = responseData['Data']['DsaCode'];
 
       // Save the required data (assuming 'Id' and 'ApprovalNumber' are part of the response JSON)
       box.write("Id", id);
-      box.write("ApprovalNumber", approvalNumber);
+      //box.write("ApprovalNumber", approvalNumber);
       box.write("DsaCode", dsa);
       print("Id: $id");
-      print('Saved Id: $id and ApprovalNumber: $approvalNumber and dsa: $dsa');
+      //print('Saved Id: $id and ApprovalNumber: $approvalNumber and dsa: $dsa');
 
       return response;
     } else if (response.statusCode == 401) {
@@ -735,9 +735,9 @@ class ApiProvider {
     if (response.statusCode == 200) {
       print(response.statusCode);
       var responseDataa2 = json.decode(response.body);
-      var approval = responseDataa2['data']['ApprovalNumber'];
-      var memberId = responseDataa2['data']['Id'];
-      box.write("ApprovalNumber", approval);
+      var approval = responseDataa2['MemberApprovalNumber'];
+      var memberId = responseDataa2['Id'];
+      box.write("MemberApprovalNumber", approval);
       box.write("Id", memberId);
       print("ApprovalNumberrrrrrr:$approval");
       print("Idddd:$memberId");
@@ -1037,7 +1037,7 @@ class ApiProvider {
     });
 
     print("url: $url");
-    print("body: $body");
+    print("body on holdMember: $body");
 
     http.Response response = await http.post(
       Uri.parse(url),
@@ -1047,21 +1047,23 @@ class ApiProvider {
       },
     );
 
-    print("Response body: ${response.body}");
+    print("Response body onHold: ${response.body}");
 
     if (response.statusCode == 200) {
       print(response.statusCode);
       var responseDataa2 = json.decode(response.body);
       // var id = responseData['Data']['Id'];
-      var membrOnHoldApprovalNum = responseDataa2['Data']['ApprovalNumber'];
-      var memberId = responseDataa2['data']['Id'];
+      var membrOnHoldApprovalNum = responseDataa2['HoldApprovalNumber'];
+      var memberId = responseDataa2['Id'];
+      //box.write("Id", memberId);
+      box.write("HoldApprovalNumber", membrOnHoldApprovalNum);
       box.write("Id", memberId);
-      box.write("ApprovalNumber", membrOnHoldApprovalNum);
-      print("Idddd:$memberId");
-      print("response:$responseDataa2");
+      //print("Idddd:$memberId");
+      print("response On Hold:$responseDataa2");
 
       // box.write("DsaCode", dsa);
       print("membrOnHoldApprovalNum: $membrOnHoldApprovalNum");
+      print("membrOnHold Id: $memberId");
       // print('Saved Id: $id and ApprovalNumber: $approvalNumber and dsa: $dsa');
       print("response:$responseDataa2");
       return responseDataa2;
@@ -1078,24 +1080,46 @@ class ApiProvider {
   ///todo get getApprovalForm api 12...
   static Future<ApprovalFormModel?> getApprovalForm() async {
 
-    String approvalNum = box.read("ApprovalNumber")?.toString() ?? 'null';
+    String approvalNum = box.read("MemberApprovalNumber")?.toString() ?? 'null';
     print('approbal :$approvalNum');
-var url = '${baseUrl}CommonApi/Maf?ApprovalNumber=$approvalNum';
+    var url = '${baseUrl}CommonApi/Maf?ApprovalNumber=$approvalNum';
     try {
       // Construct the API URL using the retrieved ApprovalNumber
-      final response = await http.get(Uri.parse(
-          //'https://new.signatureresorts.in/api/CommonApi/Maf?ApprovalNumber=3222'
-          //https://new.signatureresorts.in/api/
-         url
-      ));
-print("urlApproval:$url");
+      final response = await http.get(Uri.parse(url));
+      print("urlApproval:$url");
 
       if (response.statusCode == 200) {
         var responseData = json.decode(response.body);
         ApprovalFormModel? approvalFormModel = approvalFormModelFromJson(response.body);
         print("API Response ApprovalNumber: ${response.body}");
-
         print("ApprovalFormModel: $approvalFormModel");
+        return approvalFormModel;
+      } else {
+        print("API Error: ${response.statusCode} - ${response.body}");
+        return null;
+      }
+    } catch (e) {
+      print("API Exception: $e");
+      return null;
+    }
+  }
+  ///todo get getHoldMemberApprovalForm api 13...
+  static Future<ApprovalFormModel?> getHoldMemberApprovalForm() async {
+
+    String approvalNum = box.read("HoldApprovalNumber")?.toString() ?? 'null';
+    print('approbal on hold :$approvalNum');
+    var url = '${baseUrl}CommonApi/Maf?ApprovalNumber=$approvalNum';
+    try {
+      // Construct the API URL using the retrieved ApprovalNumber
+      final response = await http.get(Uri.parse(url));
+      print("urlApproval:$url");
+
+      if (response.statusCode == 200) {
+        var responseData = json.decode(response.body);
+        ApprovalFormModel? approvalFormModel = approvalFormModelFromJson(response.body);
+        print("API Response ApprovalNumber on hold: ${response.body}");
+
+        print("ApprovalFormModel on hold: $approvalFormModel");
         return approvalFormModel;
       } else {
         print("API Error: ${response.statusCode} - ${response.body}");

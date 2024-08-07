@@ -168,7 +168,7 @@ TextEditingController? dob1,
     // Initializations can go here
   }
 
-  Future<bool> postAddMember() async {
+  Future<void> postAddMember() async {
     isLoading.value = true;
     try {
       String dateOfJoiningText = generateController.dateInput.text;
@@ -194,27 +194,27 @@ TextEditingController? dob1,
 
       if (dateOfJoining == null) {
         Get.snackbar('Error', 'Please enter a valid Date of Joining in yyyy-MM-dd format');
-        return false;
+        //return false;
       }
       if (member1DOB == null) {
         Get.snackbar('Error', 'Please enter a valid Member 1 DOB in yyyy-MM-dd format');
-        return false;
+        //return false;
       }
       if (member2DOB == null) {
         Get.snackbar('Error', 'Please enter a valid Member 2 DOB in yyyy-MM-dd format');
-        return false;
+       // return false;
       }
       if (validity == null) {
         Get.snackbar('Error', 'Please enter a valid Validity Date in yyyy-MM-dd format');
-        return false;
+       // return false;
       }
       if (amcDueDate == null) {
         Get.snackbar('Error', 'Please enter a valid AMC Due Date in yyyy-MM-dd format');
-        return false;
+       // return false;
       }
       if (emiStartDate == null) {
         Get.snackbar('Error', 'Please enter a valid EMI Start Date in yyyy-MM-dd format');
-        return false;
+       // return false;
       }
 
       // int? tenure = int.tryParse(dropdownTenure);
@@ -344,15 +344,15 @@ TextEditingController? dob1,
         final responseBody = jsonDecode(res.body);
         //final result = postAddMemberModelFromJson(res.body);
         print('Add Member: ${responseBody.message}');
-        return true;
+       // return true;
       } else {
         print('Error: Failed to add member data');
-        return false;
+       // return false;
       }
     } catch (e) {
       isSuccess.value = false;
       print('Errorrr: $e');
-      return false;
+      //return false;
     } finally {
       isLoading.value = false;
     }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dsa_app/controller/controller.dart';
 import 'package:dsa_app/view/approval_form.dart';
 import 'package:dsa_app/view/widgets/appbar.dart';
@@ -24,12 +26,11 @@ class RegisterUser4 extends StatefulWidget {
 class _RegisterUser4State extends State<RegisterUser4> {
   int _selectedValue = 1;
   final int adminCharge = 12000;
-  final AddMemberController _addMemberController =
-      Get.put(AddMemberController());
+  final AddMemberController _addMemberController = Get.put(AddMemberController());
   late final int emi;
   bool _showAdditionalFields = false;
-  final ApprovalFormController approvalFormController =
-      Get.put(ApprovalFormController());
+  final ApprovalFormController approvalFormController = Get.put(ApprovalFormController());
+  Timer? _debounce;
 
   var payment = [
     'Select',
@@ -60,8 +61,23 @@ class _RegisterUser4State extends State<RegisterUser4> {
     _addMemberController.noOfEmiController?.addListener(() {
       updateEmi();
     });
+    _addMemberController.nightStayController?.addListener((){
+      updateDaysAndNights();
+    });
   }
-
+void updateDaysAndNights(){
+    if(_addMemberController.nightStayController!.text.isNotEmpty){
+      try{
+        final night = int.parse(_addMemberController.nightStayController!.text);
+        final days= night+1;
+        _addMemberController.dayStayController!.text = days.toString();
+      } catch (e) {
+        _addMemberController.dayStayController!.text ='';
+      }
+    } else {
+      _addMemberController.dayStayController!.text ='';
+    }
+}
   void updatePurchasePrice() {
     if (_addMemberController.totalCostController!.text.isNotEmpty) {
       try {
@@ -1524,7 +1540,9 @@ class _RegisterUser4State extends State<RegisterUser4> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             NextButton(
-                                onTap: () async {
+                              onTap: () {
+                                if (_debounce?.isActive ?? false) _debounce?.cancel();
+                                _debounce = Timer(const Duration(milliseconds: 300), () async {
                                   if (isLoading) return; // Prevent multiple taps
 
                                   setState(() {
@@ -1532,20 +1550,27 @@ class _RegisterUser4State extends State<RegisterUser4> {
                                   });
 
                                   try {
-                                    print("final addMember");
+                                    print("Starting to add member...");
 
                                     // Add member
-                                    await _addMemberController.checkAddMember();
-                                    print("Member added successfully.");
+                                    bool memberAdded = await _addMemberController.checkAddMember();
+                                    if (memberAdded) {
+                                      print("Member added successfully.");
 
-                                    // Fetch approval form
-                                    bool success = await approvalFormController.fetchApprovalForm();
-                                    if (success) {
-                                      print("addmember:${approvalFormController.getjobdetailbyidModel?.data?.member1Dob}");
-                                      print("modelApproval:${approvalFormController.getjobdetailbyidModel}");
-                                      Get.to(() => ApprovalForm());
+                                      // Delay to simulate some waiting time before fetching approval form
+                                      await Future.delayed(Duration(seconds: 2));
+
+                                      // Fetch approval form
+                                      bool success = await approvalFormController.fetchApprovalForm();
+                                      if (success) {
+                                        print("addmember: ${approvalFormController.getjobdetailbyidModel?.data?.member1Dob}");
+                                        print("modelApproval: ${approvalFormController.getjobdetailbyidModel}");
+                                        await Get.to(() => ApprovalForm());
+                                      } else {
+                                        Get.snackbar("Error", "Failed to fetch approval form. Please try again.");
+                                      }
                                     } else {
-                                      Get.snackbar("Error", "Failed to Add Members. Please try again.");
+                                      Get.snackbar("Error", "Failed to add member. Please try again.");
                                     }
                                   } catch (e) {
                                     Get.snackbar("Error", "An error occurred. Please try again.");
@@ -1554,23 +1579,143 @@ class _RegisterUser4State extends State<RegisterUser4> {
                                       isLoading = false;
                                     });
                                   }
-                                  //  print("final addMember");
-                                  //
-                                  // await _addMemberController.checkAddMember();
-                                  //  bool success = await approvalFormController.fetchApprovalForm();
-                                  //  if (success) {
-                                  //    // approvalFormController.fetchApprovalForm();
-                                  //    print("addmember:${approvalFormController.getjobdetailbyidModel?.data?.member1Dob}");
-                                  //    print("modelApproval:${approvalFormController.getjobdetailbyidModel}");
-                                  //    Get.to(()=> ApprovalForm());
-                                  //  } else {
-                                  //    // Handle failure to save signatures
-                                  //    Get.snackbar("Error", "Failed to Add Members. Please try again.");
-                                  //  }
-                                },
-                                text: "Submit",
-                                h: h / 18,
-                                w: w / 2.3),
+                                });
+                              },
+                              // onTap: () async {
+                              //   if (isLoading) return; // Prevent multiple taps
+                              //
+                              //   setState(() {
+                              //     isLoading = true;
+                              //   });
+                              //
+                              //   try {
+                              //     print("Starting to add member...");
+                              //
+                              //     // Add member
+                              //     bool memberAdded = await _addMemberController.checkAddMember();
+                              //     if (memberAdded) {
+                              //       print("Member added successfully.");
+                              //
+                              //       // Delay to simulate some waiting time before fetching approval form
+                              //       await Future.delayed(Duration(seconds: 2));
+                              //
+                              //       // Fetch approval form
+                              //       bool success = await approvalFormController.fetchApprovalForm();
+                              //       if (success) {
+                              //         print("addmember: ${approvalFormController.getjobdetailbyidModel?.data?.member1Dob}");
+                              //         print("modelApproval: ${approvalFormController.getjobdetailbyidModel}");
+                              //         await Get.to(() => ApprovalForm());
+                              //       } else {
+                              //         Get.snackbar("Error", "Failed to fetch approval form. Please try again.");
+                              //       }
+                              //     } else {
+                              //       Get.snackbar("Error", "Failed to add member. Please try again.");
+                              //     }
+                              //   } catch (e) {
+                              //     Get.snackbar("Error", "An error occurred. Please try again.");
+                              //   } finally {
+                              //     setState(() {
+                              //       isLoading = false;
+                              //     });
+                              //   }
+                              // },
+                              text: "Submit",
+                              h: h / 18,
+                              w: w / 2.3,
+                            ),
+
+                            // NextButton(
+                            //   onTap: () async {
+                            //     if (isLoading) return; // Prevent multiple taps
+                            //
+                            //     setState(() {
+                            //       isLoading = true;
+                            //     });
+                            //
+                            //     try {
+                            //       print("Starting to add member...");
+                            //
+                            //       // Add member
+                            //       bool memberAdded = await _addMemberController.checkAddMember();
+                            //       if (memberAdded) {
+                            //         print("Member added successfully.");
+                            //
+                            //         // Fetch approval form
+                            //         bool success = await approvalFormController.fetchApprovalForm();
+                            //         if (success) {
+                            //           print("addmember: ${approvalFormController.getjobdetailbyidModel?.data?.member1Dob}");
+                            //           print("modelApproval: ${approvalFormController.getjobdetailbyidModel}");
+                            //         await  Get.to(() => ApprovalForm());
+                            //         } else {
+                            //           Get.snackbar("Error", "Failed to fetch approval form. Please try again.");
+                            //         }
+                            //       } else {
+                            //         Get.snackbar("Error", "Failed to add member. Please try again.");
+                            //       }
+                            //     } catch (e) {
+                            //       Get.snackbar("Error", "An error occurred. Please try again.");
+                            //     } finally {
+                            //       setState(() {
+                            //         isLoading = false;
+                            //       });
+                            //     }
+                            //   },
+                            //   text: "Submit",
+                            //   h: h / 18,
+                            //   w: w / 2.3,
+                            // ),
+
+
+
+
+                            // NextButton(
+                            //     onTap: () async {
+                            //       if (isLoading) return; // Prevent multiple taps
+                            //
+                            //       setState(() {
+                            //         isLoading = true;
+                            //       });
+                            //
+                            //       try {
+                            //         print("final addMember");
+                            //
+                            //         // Add member
+                            //         await _addMemberController.checkAddMember();
+                            //         print("Member added successfully.");
+                            //
+                            //         // Fetch approval form
+                            //         bool success = await approvalFormController.fetchApprovalForm();
+                            //         if (success) {
+                            //           print("addmember:${approvalFormController.getjobdetailbyidModel?.data?.member1Dob}");
+                            //           print("modelApproval:${approvalFormController.getjobdetailbyidModel}");
+                            //           Get.to(() => ApprovalForm());
+                            //         } else {
+                            //           Get.snackbar("Error", "Failed to Add Members. Please try again.");
+                            //         }
+                            //       } catch (e) {
+                            //         Get.snackbar("Error", "An error occurred. Please try again.");
+                            //       } finally {
+                            //         setState(() {
+                            //           isLoading = false;
+                            //         });
+                            //       }
+                            //       //  print("final addMember");
+                            //       //
+                            //       // await _addMemberController.checkAddMember();
+                            //       //  bool success = await approvalFormController.fetchApprovalForm();
+                            //       //  if (success) {
+                            //       //    // approvalFormController.fetchApprovalForm();
+                            //       //    print("addmember:${approvalFormController.getjobdetailbyidModel?.data?.member1Dob}");
+                            //       //    print("modelApproval:${approvalFormController.getjobdetailbyidModel}");
+                            //       //    Get.to(()=> ApprovalForm());
+                            //       //  } else {
+                            //       //    // Handle failure to save signatures
+                            //       //    Get.snackbar("Error", "Failed to Add Members. Please try again.");
+                            //       //  }
+                            //     },
+                            //     text: "Submit",
+                            //     h: h / 18,
+                            //     w: w / 2.3),
                             NextButton(
                                 onTap: () {
                                   print("final addMember");
@@ -1583,11 +1728,18 @@ class _RegisterUser4State extends State<RegisterUser4> {
                                 w: w / 2.3),
                           ],
                         );
-                })
 
+                }),
+    // if (isLoading)
+    // Container(
+    // color: Colors.black.withOpacity(0.5),
+    // child: Center(
+    // child: CircularProgressIndicator(),
+    // ))
                 //CircleAvatar(child: IconButton(onPressed: (){Get.to(()=> PdfPreviewPage("text"));}, icon: Icon(Icons.picture_as_pdf_outlined)),)
               ],
             ),
+
           ),
         ));
   }

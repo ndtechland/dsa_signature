@@ -63,7 +63,7 @@ class _ApprovalFormState extends State<ApprovalForm> {
       //     ),),
       // ),
       body: Obx(() {
-      if(_controller.isLoading.value && approvalFormController.isLoading.value ){
+      if(approvalFormController.isLoading.value ){
         return Center(
           child: CircularProgressIndicator(),
         );
@@ -110,7 +110,7 @@ class _ApprovalFormState extends State<ApprovalForm> {
                     ),
                   ),
                   const SizedBox(
-                    height: 15,
+                    height: 20,
                   ),
 
 
@@ -123,7 +123,7 @@ class _ApprovalFormState extends State<ApprovalForm> {
                     return Row(
                       children: [
                         AppText(text: "S. No.:  ", size: 18,color: blue,),
-                        AppText(text: "${approvalFormController.getjobdetailbyidModel?.data!.approvalNumber.toString()}/${_controller.dsaCode.value}/${_controller.guestIdController.text}", size: 18,fontWeight: FontWeight.bold,)
+                        AppText(text: "${approvalFormController.getjobdetailbyidModel?.data!.approvalNumber.toString()}/${_controller.dsaCode.value}/${_controller.guestIdController.text}", size: 16,fontWeight: FontWeight.bold,)
                       ],
                     );}}
                   ),
@@ -165,7 +165,7 @@ class _ApprovalFormState extends State<ApprovalForm> {
                           child: Container(
                             decoration: UnderlineTabIndicator(borderSide: BorderSide(color: Colors.black)),
                             child: Text(
-                              "${_controller.nameController.text}",style: TextStyle(
+                              "${approvalFormController.getjobdetailbyidModel?.data?.memberName1.toString()}",style: TextStyle(
                               fontSize: 17,fontWeight: FontWeight.w500,
                               //decoration: TextDecoration.underline,
 
@@ -306,7 +306,7 @@ class _ApprovalFormState extends State<ApprovalForm> {
                           child: Container(
                             decoration: UnderlineTabIndicator(borderSide: BorderSide(color: Colors.black)),
                             child: Text(
-                              _controller.numberController.text,style: TextStyle(
+                              "${approvalFormController.getjobdetailbyidModel?.data?.mobile1.toString()}",style: TextStyle(
                               fontSize: 17,fontWeight: FontWeight.w500,
                               //decoration: TextDecoration.underline,
 

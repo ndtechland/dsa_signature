@@ -51,18 +51,27 @@ class _OnHoldMember2State extends State<OnHoldMember2> {
               child: const Image(image:AssetImage('assets/logo.png'),height: 70,width: 70,)),
           centerTitle: true,
         ),
-        body: SingleChildScrollView(
+        body: Obx(() {
+      if(membersOnHoldController.isLoading.value){
+        return Center(child: CircularProgressIndicator());
+      }
+      else {
+        //  membersOnHoldController.userNameController?.text = _userNameController.resultUserName.value;
+        return SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(18, 2, 18, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 10),
-                AppText(text: "Member 2 DOB", size: 16,fontWeight: FontWeight.w500,color: Colors.black87,),
+                AppText(text: "Member 2 DOB",
+                  size: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,),
                 const SizedBox(height: 6,),
                 SizedBox(
                   width: w / 1.1,
-                  height: h/15,
+                  height: h / 15,
                   child: TextFormField(
                     controller: membersOnHoldController.dob2,
                     readOnly: true,
@@ -95,11 +104,14 @@ class _OnHoldMember2State extends State<OnHoldMember2> {
                   ),
                 ),
                 const SizedBox(height: 10,),
-                AppText(text: "Address", size: 16,fontWeight: FontWeight.w500,color: Colors.black87,),
+                AppText(text: "Address",
+                  size: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,),
                 const SizedBox(height: 6,),
                 SizedBox(
                   width: w / 1.1,
-                  height: h/15,
+                  height: h / 15,
                   child: TextFormField(
                     controller: membersOnHoldController.addressController,
                     decoration: const InputDecoration(
@@ -117,11 +129,14 @@ class _OnHoldMember2State extends State<OnHoldMember2> {
                   ),
                 ),
                 const SizedBox(height: 10,),
-                AppText(text: "Residence No", size: 16,fontWeight: FontWeight.w500,color: Colors.black87,),
+                AppText(text: "Residence No",
+                  size: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,),
                 const SizedBox(height: 6,),
                 SizedBox(
                   width: w / 1.1,
-                  height: h/15,
+                  height: h / 15,
                   child: TextFormField(
                     controller: membersOnHoldController.residenceController,
                     decoration: const InputDecoration(
@@ -133,11 +148,14 @@ class _OnHoldMember2State extends State<OnHoldMember2> {
                   ),
                 ),
                 const SizedBox(height: 10,),
-                AppText(text: "Email", size: 16,fontWeight: FontWeight.w500,color: Colors.black87,),
+                AppText(text: "Email",
+                  size: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,),
                 const SizedBox(height: 6,),
                 SizedBox(
                   width: w / 1.1,
-                  height: h/15,
+                  height: h / 15,
                   child: TextFormField(
                     controller: _newuserholdingController.emailController,
                     decoration: const InputDecoration(
@@ -155,11 +173,14 @@ class _OnHoldMember2State extends State<OnHoldMember2> {
                   ),
                 ),
                 const SizedBox(height: 10,),
-                AppText(text: "City", size: 16,fontWeight: FontWeight.w500,color: Colors.black87,),
+                AppText(text: "City",
+                  size: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,),
                 const SizedBox(height: 6,),
                 SizedBox(
                   width: w / 1.1,
-                  height: h/15,
+                  height: h / 15,
                   child: TextFormField(
                     controller: membersOnHoldController.cityController,
                     decoration: const InputDecoration(
@@ -177,11 +198,14 @@ class _OnHoldMember2State extends State<OnHoldMember2> {
                   ),
                 ),
                 const SizedBox(height: 10,),
-                AppText(text: "Pincode", size: 16,fontWeight: FontWeight.w500,color: Colors.black87,),
+                AppText(text: "Pincode",
+                  size: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,),
                 const SizedBox(height: 6,),
                 SizedBox(
                   width: w / 1.1,
-                  height: h/15,
+                  height: h / 15,
                   child: TextFormField(
                     controller: membersOnHoldController.pincodeController,
                     decoration: const InputDecoration(
@@ -202,16 +226,17 @@ class _OnHoldMember2State extends State<OnHoldMember2> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    NextButton(onTap: (){
-
-                      Get.to((const OnHoldMember3()));}, text: "Fill Membership Details", h: h/18, w: w/1.5),
+                    NextButton(onTap: () {
+                      Get.to((const OnHoldMember3()));
+                    }, text: "Fill Membership Details", h: h / 18, w: w / 1.5),
                   ],
                 ),
 
               ],
             ),
           ),
-        )
+        );
+      }})
     );
   }
 }

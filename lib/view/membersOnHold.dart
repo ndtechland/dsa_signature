@@ -118,7 +118,7 @@ class _MembersOnHoldState extends State<MembersOnHold> {
 
                         _newuserholdingController.nameController.text = selectedMember.name;
                         _newuserholdingController.mobileController.text = selectedMember.mobileNumber;
-                        _newuserholdingController.dateHolding.text = selectedMember.createDate.toString();
+                        _newuserholdingController.dateHolding.text = selectedMember.createDate;
                         _newuserholdingController.dropdownvalue1 = selectedMember.preName;
                         _membersOnHoldController.emailController?.text = selectedMember.email.toString();
                         _membersOnHoldController.preAmoController?.text = selectedMember.amount.toString();
